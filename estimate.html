@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lily Garden｜お見積もりシステム</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-green: #1e3d2f;
+    --forest: #2d5a3d;
+    --sage: #4a7c59;
+    --leaf: #6aab78;
+    --light-green: #a8d5b5;
+    --pale-green: #e8f5ec;
+    --cream: #faf8f4;
+    --warm-white: #ffffff;
+    --gold: #c8a84b;
+    --blush: #fdf0f3;
+    --lily-pink: #e8a0b4;
+    --soft-gold: #f0c96a;
+    --text-dark: #1a2e1a;
+    --text-mid: #3d5a40;
+    --text-light: #6b8c72;
+    --border: #cce5d4;
+    --shadow: 0 4px 24px rgba(30, 61, 47, 0.08);
+    --shadow-hover: 0 8px 32px rgba(30, 61, 47, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* Header */
+  .site-header {
+    background: linear-gradient(135deg, var(--deep-green) 0%, #2a5040 100%);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+
+  .site-header::after {
+    content: '🌿';
+    position: absolute;
+    right: 24px;
+    font-size: 28px;
+    opacity: 0.35;
+  }
+
+  .logo-mark {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--soft-gold), var(--gold));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .site-header-text h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 17px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .site-header-text p {
+    font-size: 11px;
+    color: var(--light-green);
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  /* Layout */
+  .main-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* Page title */
+  .page-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 32px 0 8px;
+  }
+
+  .page-title h2 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 28px;
+    color: var(--deep-green);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .page-title p {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--leaf), var(--light-green), var(--lily-pink));
+    border-radius: 20px 20px 0 0;
+  }
+
+  .card-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--deep-green);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px dashed var(--pale-green);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title-num {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--leaf), var(--forest));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(45,90,61,0.3);
+  }
+
+  /* Form elements */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  input[type="number"], select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text-dark);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  input[type="number"]:focus, select:focus, textarea:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.12);
+    background: #fff;
+  }
+
+  .unit-label {
+    font-size: 14px;
+    color: var(--text-light);
+    white-space: nowrap;
+    min-width: 40px;
+  }
+
+  .unit-toggle {
+    display: flex;
+    background: var(--pale-green);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .unit-btn {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .unit-btn.active {
+    background: var(--forest);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(45, 90, 61, 0.3);
+  }
+
+  /* Work type checkboxes */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .work-item {
+    position: relative;
+  }
+
+  .work-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .work-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--cream);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-mid);
+  }
+
+  .work-label:hover {
+    border-color: var(--leaf);
+    background: var(--pale-green);
+  }
+
+  .work-item input:checked + .work-label {
+    border-color: var(--forest);
+    background: var(--pale-green);
+    color: var(--deep-green);
+    font-weight: 500;
+  }
+
+  .work-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .check-mark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .work-item input:checked + .work-label .check-mark {
+    background: var(--forest);
+    border-color: var(--forest);
+  }
+
+  .work-item input:checked + .work-label .check-mark::after {
+    content: '✓';
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* Tree count inputs */
+  .tree-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .tree-input-box {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+
+  .tree-input-box .tree-size-label {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .tree-input-box .tree-size-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--deep-green);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .tree-input-box input {
+    width: 100%;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 18px;
+    font-weight: 700;
+    background: #fff;
+  }
+
+  /* Difficulty radio */
+  .difficulty-grid {
+    display: flex;
+    gap: 10px;
+  }
+
+  .diff-item {
+    flex: 1;
+    position: relative;
+  }
+
+  .diff-item input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .diff-label {
+    display: block;
+    text-align: center;
+    padding: 14px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--cream);
+    font-size: 13px;
+    color: var(--text-mid);
+  }
+
+  .diff-item input:checked + .diff-label {
+    border-color: var(--forest);
+    background: var(--forest);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .diff-multiplier {
+    display: block;
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  /* Parking toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+  }
+
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--border);
+    border-radius: 28px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .toggle-switch input:checked + .toggle-slider {
+    background: var(--forest);
+  }
+
+  .toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+  }
+
+  .toggle-text {
+    font-size: 14px;
+    color: var(--text-mid);
+  }
+
+  /* Collapse section */
+  .collapse-section {
+    margin-top: 12px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  /* Estimate panel */
+  .estimate-panel {
+    position: sticky;
+    top: 96px;
+  }
+
+  .estimate-card {
+    background: var(--deep-green);
+    border-radius: 20px;
+    padding: 28px;
+    color: #fff;
+    box-shadow: 0 8px 40px rgba(30, 61, 47, 0.25);
+  }
+
+  .estimate-header {
+    text-align: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 16px;
+  }
+
+  .estimate-header h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    color: var(--light-green);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  /* 合計金額2列表示 */
+  .total-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .total-box {
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+
+  .total-box.market {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .total-box.mine {
+    background: rgba(200,168,75,0.22);
+    border: 1px solid rgba(200,168,75,0.5);
+  }
+
+  .total-box-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .total-box.mine .total-box-label { color: var(--gold); }
+
+  /* 中央値（目安）大きく表示 */
+  .total-box-mid {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .total-box.mine .total-box-mid {
+    color: var(--gold);
+    font-size: 20px;
+  }
+
+  /* 範囲（小さく）*/
+  .total-box-range {
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .total-box.mine .total-box-range { color: rgba(200,168,75,0.7); }
+
+  .total-box-tax {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .total-box.mine .total-box-tax { color: rgba(200,168,75,0.6); }
+
+  /* 比較テーブル */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+
+  .compare-table thead tr {
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .compare-table th {
+    padding: 7px 5px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    text-align: right;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .compare-table th:first-child { text-align: left; }
+
+  .compare-table td {
+    padding: 9px 5px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    vertical-align: middle;
+    color: rgba(255,255,255,0.8);
+    text-align: right;
+  }
+
+  .compare-table td:first-child {
+    text-align: left;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    font-size: 11px;
+  }
+
+  /* 中央値メイン表示 */
+  .price-main {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  /* 範囲サブ表示 */
+  .price-sub {
+    font-size: 9px;
+    opacity: 0.55;
+    line-height: 1.3;
+    display: block;
+  }
+
+  .compare-table .market-price .price-main { color: rgba(255,255,255,0.65); }
+  .compare-table .my-price .price-main { color: #fff; }
+  .compare-table .my-price { color: var(--gold); }
+  .compare-table .my-price .price-main { color: var(--gold); font-size: 13px; }
+
+  .compare-table tfoot td {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .compare-table tfoot .market-price { color: rgba(255,255,255,0.6); }
+  .compare-table tfoot .my-price { color: var(--gold); font-size: 14px; }
+
+  /* 差額バッジ */
+  .diff-tag {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    margin-left: 3px;
+    vertical-align: middle;
+  }
+
+  .diff-tag.above { background: rgba(200,168,75,0.3); color: var(--gold); }
+  .diff-tag.below { background: rgba(106,171,120,0.3); color: #a8e6b8; }
+  .diff-tag.same  { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+
+  .no-estimate {
+    text-align: center;
+    padding: 32px 0;
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* Print button */
+  .print-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--gold);
+    color: var(--deep-green);
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .print-btn:hover {
+    background: #d4b45a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(200, 168, 75, 0.4);
+  }
+
+  .print-btn:active {
+    transform: translateY(0);
+  }
+
+  .print-btn:disabled {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.4);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Note badge */
+  .price-note {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 16px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 88px;
+  }
+
+  .area-sub {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 4px;
+  }
+
+  /* Subtask detail */
+  .subtask-detail {
+    background: var(--pale-green);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+
+  .subtask-detail h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--deep-green);
+    margin-bottom: 12px;
+  }
+
+  .area-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .area-input-row label {
+    font-size: 13px;
+    margin-bottom: 0;
+    min-width: 110px;
+  }
+
+  .area-input-row input {
+    max-width: 120px;
+  }
+
+  /* Felling detail */
+  .fell-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .fell-box {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+  }
+
+  .fell-box span {
+    display: block;
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+
+  .fell-box strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--deep-green);
+    margin-bottom: 8px;
+  }
+
+  .fell-box input {
+    width: 100%;
+    text-align: center;
+    padding: 8px 6px;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--cream);
+  }
+
+  /* ============================================================
+     Responsive Design（スマホ対応）
+  ============================================================ */
+
+  /* タブレット */
+  @media (max-width: 900px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+      padding: 20px 16px;
+      gap: 16px;
+    }
+    .estimate-panel {
+      position: static;
+      order: -1; /* 見積結果を上に */
+    }
+    .work-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .difficulty-grid {
+      flex-direction: row;
+    }
+  }
+
+  /* スマホ（〜600px） */
+  @media (max-width: 600px) {
+    .main-layout {
+      padding: 12px 10px;
+      gap: 12px;
+    }
+
+    /* ヘッダー */
+    .site-header {
+      padding: 12px 16px;
+    }
+    .site-header::after {
+      display: none;
+    }
+    .site-header-text h1 {
+      font-size: 15px;
+    }
+    .site-header-text p {
+      font-size: 10px;
+    }
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+
+    /* ページタイトル */
+    .page-title {
+      padding: 16px 0 4px;
+    }
+    .page-title h2 {
+      font-size: 20px;
+    }
+    .page-title p {
+      font-size: 12px;
+    }
+
+    /* カード */
+    .card {
+      padding: 18px 14px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    /* 見積カード */
+    .estimate-card {
+      padding: 18px 14px;
+      border-radius: 18px;
+    }
+    .estimate-header h3 {
+      font-size: 13px;
+    }
+
+    /* 合計ボックス */
+    .total-box-mid {
+      font-size: 16px;
+    }
+    .total-box.mine .total-box-mid {
+      font-size: 18px;
+    }
+
+    /* 比較テーブル：横スクロール */
+    #estimate-items {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -14px;
+      padding: 0 14px;
+    }
+    .compare-table {
+      min-width: 290px;
+      font-size: 10px;
+    }
+    .compare-table th,
+    .compare-table td {
+      padding: 7px 4px;
+    }
+    .price-sub {
+      font-size: 8px;
+    }
+    .diff-tag {
+      display: block;
+      margin: 2px 0 0;
+      font-size: 9px;
+    }
+
+    /* サイズ選択：3列 */
+    .size-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .size-label {
+      padding: 10px 4px;
+      border-radius: 10px;
+    }
+    .size-icon {
+      font-size: 18px;
+    }
+
+    /* 作業種類 */
+    .work-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .work-label {
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+
+    /* 本数入力 */
+    .tree-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .tree-input-box {
+      padding: 10px 8px;
+    }
+    .tree-input-box input {
+      font-size: 16px;
+      padding: 8px 4px;
+    }
+
+    /* 難易度ボタン */
+    .diff-label {
+      padding: 11px 6px;
+      font-size: 12px;
+    }
+
+    /* 印刷ボタン */
+    .print-btn {
+      font-size: 14px;
+      padding: 14px 20px;
+    }
+  }
+
+  /* 小さいスマホ（〜480px）*/
+  @media (max-width: 480px) {
+    .site-header {
+      padding: 11px 14px;
+    }
+    .site-header-text p {
+      display: none;
+    }
+    .card {
+      padding: 14px 12px;
+    }
+    .size-desc {
+      display: none;
+    }
+    .work-label {
+      gap: 6px;
+      font-size: 12px;
+    }
+  }
+
+  /* iPhone SE等（〜380px）*/
+  @media (max-width: 380px) {
+    .main-layout {
+      padding: 10px 8px;
+    }
+    .logo-mark {
+      display: none;
+    }
+    .site-header-text h1 {
+      font-size: 14px;
+    }
+    .size-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .work-grid {
+      grid-template-columns: 1fr;
+    }
+    .size-label {
+      padding: 8px 4px;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; }
+    .site-header { position: static; background: var(--deep-green) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .form-column { display: none !important; }
+    .main-layout { grid-template-columns: 1fr; }
+    .estimate-panel { position: static; }
+    .estimate-card {
+      background: var(--deep-green) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      color: #fff !important;
+      box-shadow: none;
+    }
+    .print-btn { display: none; }
+    .print-detail-card { display: block !important; }
+    .page-title p { display: none; }
+  }
+
+  .print-detail-card {
+    display: none;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .print-detail-card h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    color: var(--deep-green);
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--deep-green);
+    padding-bottom: 8px;
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .print-table th {
+    background: var(--pale-green);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--deep-green);
+  }
+
+  .print-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .print-table .right { text-align: right; }
+
+  /* Garden size selector */
+  .size-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .size-item {
+    position: relative;
+  }
+
+  .size-item input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .size-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 14px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--cream);
+    gap: 4px;
+  }
+
+  .size-label:hover {
+    border-color: var(--leaf);
+    background: var(--pale-green);
+  }
+
+  .size-item input:checked + .size-label {
+    border-color: var(--forest);
+    background: var(--pale-green);
+  }
+
+  .size-icon { font-size: 22px; }
+
+  .size-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--deep-green);
+  }
+
+  .size-desc {
+    font-size: 10px;
+    color: var(--text-light);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    .size-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .diff-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .diff-normal { background: #e8f5ec; color: #2d5a3d; }
+  .diff-mid { background: #fff3cd; color: #856404; }
+  .diff-hard { background: #ffe5e5; color: #cc0000; }
+
+  /* Animate estimate update */
+  @keyframes pulse-green {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .updating {
+    animation: pulse-green 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">🌸</div>
+  <div class="site-header-text">
+    <h1>Lily Garden（リリィガーデン）</h1>
+    <p>個人宅専門 お庭お手入れサービス ｜ お見積もり</p>
+  </div>
+</header>
+
+<div class="main-layout">
+  <div class="page-title">
+    <h2>かんたんお見積もり</h2>
+    <p>お庭の情報を入力するだけで、自動的に料金の目安を算出します</p>
+  </div>
+
+  <!-- 入力フォーム -->
+  <div class="form-column">
+
+    <!-- 1. 庭の広さ -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-num">1</span>
+        お庭の広さ
+      </div>
+      <div class="form-group">
+        <label>感覚でOK。近いものを選んでください</label>
+        <div class="size-grid">
+          <div class="size-item">
+            <input type="radio" name="garden-size" id="size-xs" value="xs" onchange="calcEstimate()">
+            <label class="size-label" for="size-xs">
+              <span class="size-icon">🌱</span>
+              <span class="size-name">とても小さい</span>
+              <span class="size-desc">玄関まわり<br>駐車場脇など</span>
+            </label>
+          </div>
+          <div class="size-item">
+            <input type="radio" name="garden-size" id="size-sm" value="sm" onchange="calcEstimate()">
+            <label class="size-label" for="size-sm">
+              <span class="size-icon">🌿</span>
+              <span class="size-name">小さめ</span>
+              <span class="size-desc">一般的な<br>小さい庭</span>
+            </label>
+          </div>
+          <div class="size-item">
+            <input type="radio" name="garden-size" id="size-md" value="md" onchange="calcEstimate()" checked>
+            <label class="size-label" for="size-md">
+              <span class="size-icon">🌳</span>
+              <span class="size-name">普通</span>
+              <span class="size-desc">一般的な<br>一戸建ての庭</span>
+            </label>
+          </div>
+          <div class="size-item">
+            <input type="radio" name="garden-size" id="size-lg" value="lg" onchange="calcEstimate()">
+            <label class="size-label" for="size-lg">
+              <span class="size-icon">🌲</span>
+              <span class="size-name">大きめ</span>
+              <span class="size-desc">広い庭・<br>敷地が広い</span>
+            </label>
+          </div>
+          <div class="size-item">
+            <input type="radio" name="garden-size" id="size-xl" value="xl" onchange="calcEstimate()">
+            <label class="size-label" for="size-xl">
+              <span class="size-icon">🏡</span>
+              <span class="size-name">とても広い</span>
+              <span class="size-desc">農家・大邸宅<br>広大な敷地</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 作業の種類 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-num">2</span>
+        作業の種類（複数選択可）
+      </div>
+      <div class="work-grid">
+        <div class="work-item">
+          <input type="checkbox" id="work-low" onchange="toggleDetail('detail-pruning'); calcEstimate()">
+          <label class="work-label" for="work-low">
+            <span class="work-icon">🌿</span> 剪定（低木〜1m）
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-mid" onchange="toggleDetail('detail-pruning'); calcEstimate()">
+          <label class="work-label" for="work-mid">
+            <span class="work-icon">🌳</span> 剪定（中木1〜3m）
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-high" onchange="toggleDetail('detail-pruning'); calcEstimate()">
+          <label class="work-label" for="work-high">
+            <span class="work-icon">🌲</span> 剪定（高木3m〜）
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-grass" onchange="toggleDetail('detail-area'); calcEstimate()">
+          <label class="work-label" for="work-grass">
+            <span class="work-icon">🌾</span> 草刈り
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-herbicide" onchange="toggleDetail('detail-area'); calcEstimate()">
+          <label class="work-label" for="work-herbicide">
+            <span class="work-icon">💧</span> 除草剤散布
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-pesticide" onchange="toggleDetail('detail-area'); calcEstimate()">
+          <label class="work-label" for="work-pesticide">
+            <span class="work-icon">🌸</span> 消毒・薬剤散布
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-fell" onchange="toggleDetail('detail-fell'); calcEstimate()">
+          <label class="work-label" for="work-fell">
+            <span class="work-icon">🪵</span> 伐採
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-plant" onchange="calcEstimate()">
+          <label class="work-label" for="work-plant">
+            <span class="work-icon">🪴</span> 植え込み
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-lawn" onchange="toggleDetail('detail-area'); calcEstimate()">
+          <label class="work-label" for="work-lawn">
+            <span class="work-icon">🟩</span> 芝刈り
+            <span class="check-mark"></span>
+          </label>
+        </div>
+        <div class="work-item">
+          <input type="checkbox" id="work-other" onchange="calcEstimate()">
+          <label class="work-label" for="work-other">
+            <span class="work-icon">📋</span> その他
+            <span class="check-mark"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 剪定詳細 -->
+      <div id="detail-pruning" class="subtask-detail" style="display:none; margin-top:16px;">
+        <h4>🌳 剪定する木の本数を入力してください</h4>
+        <div class="tree-grid">
+          <div class="tree-input-box">
+            <span class="tree-size-label">低木</span>
+            <span class="tree-size-name">〜1m</span>
+            <input type="number" id="cnt-low" min="0" value="0" oninput="calcEstimate()">
+          </div>
+          <div class="tree-input-box">
+            <span class="tree-size-label">中木</span>
+            <span class="tree-size-name">1〜3m</span>
+            <input type="number" id="cnt-mid" min="0" value="0" oninput="calcEstimate()">
+          </div>
+          <div class="tree-input-box">
+            <span class="tree-size-label">高木</span>
+            <span class="tree-size-name">3m〜</span>
+            <input type="number" id="cnt-high" min="0" value="0" oninput="calcEstimate()">
+          </div>
+        </div>
+      </div>
+
+      <!-- 面積作業詳細（芝刈りのみ残す） -->
+      <div id="detail-area" class="subtask-detail" style="display:none; margin-top:16px;">
+        <input type="hidden" id="area-grass">
+        <input type="hidden" id="area-herbicide">
+        <input type="hidden" id="area-pesticide">
+        <div id="area-grass-row" style="display:none;"></div>
+        <div id="area-herbicide-row" style="display:none;"></div>
+        <div id="area-pesticide-row" style="display:none;"></div>
+        <div id="area-lawn-row" class="area-input-row" style="display:none;">
+          <h4 style="margin-bottom:12px;">🟩 芝刈り面積を入力してください</h4>
+          <input type="number" id="area-lawn" min="0" placeholder="0" oninput="calcEstimate()">
+          <span class="unit-label">㎡</span>
+        </div>
+        <p class="area-sub" style="margin-top:8px;" id="area-note">※ 草刈り・除草剤・薬剤散布はお庭のサイズ（①で選択）をもとに算出します</p>
+      </div>
+
+      <!-- 伐採詳細 -->
+      <div id="detail-fell" class="subtask-detail" style="display:none; margin-top:16px;">
+        <h4>🪵 伐採する木のサイズ別本数を入力してください</h4>
+        <div class="fell-grid">
+          <div class="fell-box">
+            <span>小木</span>
+            <strong>〜3m</strong>
+            <input type="number" id="fell-small" min="0" value="0" oninput="calcEstimate()">
+          </div>
+          <div class="fell-box">
+            <span>中木</span>
+            <strong>3〜5m</strong>
+            <input type="number" id="fell-mid" min="0" value="0" oninput="calcEstimate()">
+          </div>
+          <div class="fell-box">
+            <span>大木</span>
+            <strong>5m〜</strong>
+            <input type="number" id="fell-large" min="0" value="0" oninput="calcEstimate()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 難易度 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-num">3</span>
+        作業の難易度
+      </div>
+      <div class="difficulty-grid">
+        <div class="diff-item">
+          <input type="radio" name="difficulty" id="diff-normal" value="normal" checked onchange="calcEstimate()">
+          <label class="diff-label" for="diff-normal">
+            普通
+            <span class="diff-multiplier">×1.0</span>
+          </label>
+        </div>
+        <div class="diff-item">
+          <input type="radio" name="difficulty" id="diff-mid" value="mid" onchange="calcEstimate()">
+          <label class="diff-label" for="diff-mid">
+            やや難しい
+            <span class="diff-multiplier">×1.2</span>
+          </label>
+        </div>
+        <div class="diff-item">
+          <input type="radio" name="difficulty" id="diff-hard" value="hard" onchange="calcEstimate()">
+          <label class="diff-label" for="diff-hard">
+            難しい
+            <span class="diff-multiplier">×1.5</span>
+          </label>
+        </div>
+      </div>
+      <p class="area-sub" style="margin-top:12px;">※ 斜面・狭所・電線近く・作業困難な場合は「難しい」を選択</p>
+    </div>
+
+    <!-- 4. 駐車場 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-num">4</span>
+        駐車場の有無
+      </div>
+      <div class="toggle-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="parking" checked onchange="calcEstimate()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-text" id="parking-text">あり（出張費 無料）</span>
+      </div>
+    </div>
+
+    <!-- 5. 備考 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="card-title-num">5</span>
+        備考・ご要望
+      </div>
+      <textarea id="notes" placeholder="例：大型犬がいます。門の幅が狭いです。特定の木だけ残してほしい。など..."></textarea>
+    </div>
+
+  </div>
+
+  <!-- 見積パネル -->
+  <div class="estimate-panel">
+    <div class="estimate-card" id="estimate-card">
+      <div class="estimate-header">
+        <h3>料金比較（目安・税込）</h3>
+        <div id="estimate-price-display">
+          <div class="no-estimate">
+            作業の種類と<br>詳細を入力すると<br>金額が表示されます
+          </div>
+        </div>
+      </div>
+
+      <div id="estimate-items"></div>
+
+      <p class="price-note">※ 現地確認後に正式なお見積りをご提示します<br>実際の金額は状況により変動する場合があります</p>
+
+      <button class="print-btn" id="print-btn" onclick="printEstimate()" disabled>
+        🖨️ 見積書を印刷・PDF保存
+      </button>
+    </div>
+
+    <!-- 印刷用詳細（印刷時のみ表示） -->
+    <div class="print-detail-card" id="print-detail">
+      <h3>Lily Garden（リリィガーデン）お見積書</h3>
+      <p style="font-size:13px; color:#666; margin-bottom:16px;">発行日：<span id="print-date"></span></p>
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th>作業内容</th>
+            <th class="right">最低金額</th>
+            <th class="right">最高金額</th>
+          </tr>
+        </thead>
+        <tbody id="print-table-body"></tbody>
+        <tfoot>
+          <tr>
+            <td><strong>小計</strong></td>
+            <td class="right" id="pt-min-sub"></td>
+            <td class="right" id="pt-max-sub"></td>
+          </tr>
+          <tr>
+            <td>消費税（10%）</td>
+            <td class="right" id="pt-min-tax"></td>
+            <td class="right" id="pt-max-tax"></td>
+          </tr>
+          <tr style="background:#e8f5ec;">
+            <td><strong>合計（税込）</strong></td>
+            <td class="right"><strong id="pt-min-total"></strong></td>
+            <td class="right"><strong id="pt-max-total"></strong></td>
+          </tr>
+        </tfoot>
+      </table>
+      <div id="print-notes-section" style="display:none; margin-top:16px;">
+        <p style="font-size:13px; color:#666;"><strong>備考：</strong><span id="print-notes-text"></span></p>
+      </div>
+      <p style="font-size:12px; color:#999; margin-top:16px; text-align:center;">※ 本見積もりは目安です。現地確認後に正式なお見積りをご提示します。</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let estimateData = null;
+
+  // サイズ選択→㎡換算（草刈り料金算出用）
+  function getAreaSqm() {
+    const sel = document.querySelector('input[name="garden-size"]:checked');
+    const size = sel ? sel.value : 'md';
+    const map = { xs: 10, sm: 25, md: 55, lg: 100, xl: 180 };
+    return map[size] || 55;
+  }
+
+  function getSizeLabel() {
+    const sel = document.querySelector('input[name="garden-size"]:checked');
+    const size = sel ? sel.value : 'md';
+    const labels = { xs: 'とても小さい', sm: '小さめ', md: '普通', lg: '大きめ', xl: 'とても広い' };
+    return labels[size] || '普通';
+  }
+
+  function toggleDetail(id) {
+    const el = document.getElementById(id);
+    const shouldShow = needsDetail(id);
+    el.style.display = shouldShow ? 'block' : 'none';
+
+    // 面積入力の個別表示
+    if (id === 'detail-area') {
+      const checks = {
+        'area-grass-row': 'work-grass',
+        'area-herbicide-row': 'work-herbicide',
+        'area-pesticide-row': 'work-pesticide',
+        'area-lawn-row': 'work-lawn',
+      };
+      for (const [rowId, checkId] of Object.entries(checks)) {
+        document.getElementById(rowId).style.display =
+          document.getElementById(checkId).checked ? 'flex' : 'none';
+      }
+    }
+  }
+
+  function needsDetail(id) {
+    if (id === 'detail-pruning') {
+      return ['work-low','work-mid','work-high'].some(id => document.getElementById(id).checked);
+    }
+    if (id === 'detail-area') {
+      return ['work-grass','work-herbicide','work-pesticide','work-lawn'].some(id => document.getElementById(id).checked);
+    }
+    if (id === 'detail-fell') {
+      return document.getElementById('work-fell').checked;
+    }
+    return false;
+  }
+
+  // ────────────────────────────────────────────
+  // 全国相場（ミツモア・くらしのマーケット実績ベース）
+  // 剪定：ミツモア 3本17,700円(5,900/本)、2本24,750円(12,375/本)
+  // 草刈り：ミツモア 50㎡6,000〜10,000円 / 100㎡12,000〜20,000円
+  //         くらしのマーケット 50㎡5,000〜10,000円
+  // ────────────────────────────────────────────
+  const MARKET = {
+    lowMin: 1500,  lowMax: 4000,   // 低木：ミツモア相場1,500〜4,000円/本
+    midMin: 3500,  midMax: 9000,   // 中木：ミツモア実績5,900円/本前後
+    highMin: 8000, highMax: 20000, // 高木：ミツモア実績12,000円/本前後
+    grassSmMin: 3500,  grassSmMax: 7000,   // 小（〜30㎡）：ミツモア50㎡換算
+    grassMdMin: 6000,  grassMdMax: 11000,  // 中（〜55㎡）：ミツモア・くらマ6,000〜10,000円
+    grassLgMin: 12000, grassLgMax: 22000,  // 大（100㎡〜）：ミツモア12,000〜20,000円
+    herbMin: 1500, herbMax: 4000,
+    pestMin: 2000, pestMax: 5000,
+    lawnMin: 80,   lawnMax: 180,
+    fellSmallMin: 3000,  fellSmallMax: 8000,
+    fellMidMin:  8000,   fellMidMax:  20000,
+    fellLargeMin: 20000, fellLargeMax: 50000,
+    debrisMin: 3000, debrisMax: 8000,
+    plantMin: 5000, plantMax: 12000,
+    otherMin: 5000, otherMax: 20000,
+    parking: 2000,
+  };
+
+  // ────────────────────────────────────────────
+  // ミソカ実績データ（354件）から算出した実際の単価
+  // ────────────────────────────────────────────
+  const RATES = {
+    // 剪定（本単価）
+    lowMin: 2000,  lowMax: 4000,   // 低木〜1m：椿4本15,000 → 約3,750/本
+    midMin: 5000,  midMax: 12000,  // 中木1〜3m：カナメモチ1式14,000など
+    highMin: 12000, highMax: 25000, // 高木3m〜：金木犀等複数42,000
+
+    // 草刈り・除草（1式・面積規模別）
+    grassSmMin: 10000, grassSmMax: 16000,  // 小（〜30㎡）
+    grassMdMin: 16000, grassMdMax: 20000,  // 中（30〜80㎡）
+    grassLgMin: 20000, grassLgMax: 30000,  // 大（80㎡〜）
+
+    // 除草剤散布（1式）
+    herbMin: 4000, herbMax: 6000,
+
+    // 薬剤散布・消毒（1回）
+    pestMin: 3000, pestMax: 8000,  // スポット3,000〜、薬品込み8,000
+
+    // 芝刈り（面積単価）
+    lawnMin: 100, lawnMax: 200,
+
+    // 伐採（本単価）
+    fellSmallMin: 5000,  fellSmallMax: 8000,   // 小木〜3m：月桂樹5,000〜6,000
+    fellMidMin:  8000,   fellMidMax:  20000,   // 中木3〜5m
+    fellLargeMin: 20000, fellLargeMax: 50000,  // 大木5m〜
+
+    // 枝葉回収（1式）
+    debrisMin: 4000, debrisMax: 12000,  // 小〜大 4,000〜12,000
+
+    // 植栽
+    plantMin: 8000, plantMax: 15000,   // 植栽作業費（2本〜）
+
+    otherMin: 5000, otherMax: 20000,
+    parking: 2000,
+  };
+
+  // 草刈り・除草は面積に応じてlump sum計算
+  function getGrassRate(areaSqm) {
+    if (areaSqm > 0 && areaSqm <= 30)  return { min: RATES.grassSmMin, max: RATES.grassSmMax };
+    if (areaSqm > 30 && areaSqm <= 80) return { min: RATES.grassMdMin, max: RATES.grassMdMax };
+    if (areaSqm > 80)                  return { min: RATES.grassLgMin, max: RATES.grassLgMax };
+    return { min: RATES.grassMdMin, max: RATES.grassMdMax }; // デフォルト
+  }
+
+  function getDiffMultiplier() {
+    const val = document.querySelector('input[name="difficulty"]:checked').value;
+    if (val === 'mid') return 1.2;
+    if (val === 'hard') return 1.5;
+    return 1.0;
+  }
+
+  function getDiffLabel() {
+    const val = document.querySelector('input[name="difficulty"]:checked').value;
+    if (val === 'mid') return { text: 'やや難しい', cls: 'diff-mid' };
+    if (val === 'hard') return { text: '難しい', cls: 'diff-hard' };
+    return { text: '普通', cls: 'diff-normal' };
+  }
+
+  // 相場・自分の料金を同時に計算するヘルパー
+  function calcItems(R, mult, areaSqm, parking) {
+    const items = [];
+    let tot = 0;
+    const cntLow  = parseInt(document.getElementById('cnt-low').value)  || 0;
+    const cntMid  = parseInt(document.getElementById('cnt-mid').value)  || 0;
+    const cntHigh = parseInt(document.getElementById('cnt-high').value) || 0;
+    const fellSm  = parseInt(document.getElementById('fell-small').value) || 0;
+    const fellMd  = parseInt(document.getElementById('fell-mid').value)   || 0;
+    const fellLg  = parseInt(document.getElementById('fell-large').value) || 0;
+
+    const add = (name, min, max) => {
+      const mn = Math.round(min * mult), mx = Math.round(max * mult);
+      items.push({ name, min: mn, max: mx });
+      tot += (mn + mx) / 2;
+    };
+
+    if (cntLow  > 0) add(`低木剪定×${cntLow}本`,  cntLow*R.lowMin,  cntLow*R.lowMax);
+    if (cntMid  > 0) add(`中木剪定×${cntMid}本`,  cntMid*R.midMin,  cntMid*R.midMax);
+    if (cntHigh > 0) add(`高木剪定×${cntHigh}本`, cntHigh*R.highMin, cntHigh*R.highMax);
+
+    if (document.getElementById('work-grass').checked) {
+      const r = areaSqm <= 30  ? { min: R.grassSmMin, max: R.grassSmMax }
+              : areaSqm <= 80  ? { min: R.grassMdMin, max: R.grassMdMax }
+              :                  { min: R.grassLgMin, max: R.grassLgMax };
+      add(`草刈り（${getSizeLabel()}）1式`, r.min, r.max);
+    }
+    if (document.getElementById('work-herbicide').checked) add('除草剤散布 1式', R.herbMin, R.herbMax);
+    if (document.getElementById('work-pesticide').checked) add('消毒・薬剤散布 1回', R.pestMin, R.pestMax);
+
+    if (document.getElementById('work-lawn').checked) {
+      const area = parseFloat(document.getElementById('area-lawn').value) || areaSqm;
+      if (area > 0) add(`芝刈り（${area.toFixed(0)}㎡）`, area*R.lawnMin, area*R.lawnMax);
+    }
+
+    const hasCut = (cntLow+cntMid+cntHigh > 0) ||
+      document.getElementById('work-grass').checked ||
+      document.getElementById('work-fell').checked;
+    if (hasCut) {
+      const tot3 = cntLow+cntMid+cntHigh;
+      let dMin = R.debrisMin, dMax = R.debrisMax;
+      if (tot3 > 10 || areaSqm > 80) { dMin = Math.round(R.debrisMax*0.8); dMax = R.debrisMax; }
+      else if (tot3 <= 3 && areaSqm <= 30) { dMin = R.debrisMin; dMax = Math.round(R.debrisMax*0.6); }
+      add('枝葉・草回収 1式', dMin, dMax);
+    }
+
+    if (fellSm > 0) add(`伐採（小）×${fellSm}本`, fellSm*R.fellSmallMin, fellSm*R.fellSmallMax);
+    if (fellMd > 0) add(`伐採（中）×${fellMd}本`, fellMd*R.fellMidMin,   fellMd*R.fellMidMax);
+    if (fellLg > 0) add(`伐採（大）×${fellLg}本`, fellLg*R.fellLargeMin, fellLg*R.fellLargeMax);
+
+    if (document.getElementById('work-plant').checked) add('植栽作業費', R.plantMin, R.plantMax);
+    if (document.getElementById('work-other').checked) add('その他作業', R.otherMin, R.otherMax);
+    if (!parking) add('出張費', R.parking, R.parking);
+
+    const totalMin = items.reduce((s,i) => s+i.min, 0);
+    const totalMax = items.reduce((s,i) => s+i.max, 0);
+    return { items, totalMin, totalMax };
+  }
+
+  function calcEstimate() {
+    const mult    = getDiffMultiplier();
+    const areaSqm = getAreaSqm();
+    const parking = document.getElementById('parking').checked;
+
+    document.getElementById('parking-text').textContent =
+      parking ? 'あり（出張費 無料）' : 'なし（出張費 +2,000円）';
+
+    const market = calcItems(MARKET, mult, areaSqm, parking);
+    const mine   = calcItems(RATES,  mult, areaSqm, parking);
+
+    estimateData = { market, mine };
+    renderEstimate(market, mine);
+  }
+
+  function fmt(n) { return n.toLocaleString('ja-JP') + '円'; }
+  function fmtRange(min, max) {
+    return min === max ? fmt(min) : `${fmt(min)}〜${fmt(max)}`;
+  }
+  function fmtMid(min, max) {
+    return fmt(Math.round((min + max) / 2));
+  }
+
+  function diffTag(mineMin, mineMax, mktMin, mktMax) {
+    const mineAvg = (mineMin + mineMax) / 2;
+    const mktAvg  = (mktMin  + mktMax)  / 2;
+    if (mineAvg > mktAvg * 1.1) return '<span class="diff-tag above">相場より高め</span>';
+    if (mineAvg < mktAvg * 0.9) return '<span class="diff-tag below">相場より安め</span>';
+    return '<span class="diff-tag same">相場内</span>';
+  }
+
+  function renderEstimate(market, mine) {
+    const card     = document.getElementById('estimate-card');
+    const priceEl  = document.getElementById('estimate-price-display');
+    const itemsEl  = document.getElementById('estimate-items');
+    const printBtn = document.getElementById('print-btn');
+
+    card.classList.add('updating');
+    setTimeout(() => card.classList.remove('updating'), 300);
+
+    if (mine.items.length === 0) {
+      priceEl.innerHTML = '<div class="no-estimate">作業の種類と<br>詳細を入力すると<br>金額が表示されます</div>';
+      itemsEl.innerHTML = '';
+      printBtn.disabled = true;
+      return;
+    }
+
+    const mktTax  = Math.round(market.totalMin * 0.1);
+    const mktTax2 = Math.round(market.totalMax * 0.1);
+    const myTax   = Math.round(mine.totalMin   * 0.1);
+    const myTax2  = Math.round(mine.totalMax   * 0.1);
+    const mktGrandMin = market.totalMin + mktTax;
+    const mktGrandMax = market.totalMax + mktTax2;
+    const myGrandMin  = mine.totalMin   + myTax;
+    const myGrandMax  = mine.totalMax   + myTax2;
+
+    // 合計2列（中央値メイン・範囲サブ）
+    priceEl.innerHTML = `
+      <div class="total-compare">
+        <div class="total-box market">
+          <span class="total-box-label">📊 全国相場</span>
+          <div class="total-box-mid">${fmtMid(mktGrandMin, mktGrandMax)}</div>
+          <div class="total-box-range">${fmt(mktGrandMin)}〜<br>${fmt(mktGrandMax)}</div>
+          <div class="total-box-tax">税込・目安</div>
+        </div>
+        <div class="total-box mine">
+          <span class="total-box-label">🌿 Lily Garden</span>
+          <div class="total-box-mid">${fmtMid(myGrandMin, myGrandMax)}</div>
+          <div class="total-box-range">${fmt(myGrandMin)}〜<br>${fmt(myGrandMax)}</div>
+          <div class="total-box-tax">税込・目安</div>
+        </div>
+      </div>
+    `;
+
+    // 明細比較テーブル（中央値メイン・範囲サブ）
+    const names = mine.items.map(i => i.name);
+    const rows = names.map((name, idx) => {
+      const m = market.items[idx] || { min: 0, max: 0 };
+      const y = mine.items[idx];
+      const tag = diffTag(y.min, y.max, m.min, m.max);
+      return `<tr>
+        <td>${name}${tag}</td>
+        <td class="market-price">
+          <div class="price-main">${fmtMid(m.min, m.max)}</div>
+          <span class="price-sub">${fmtRange(m.min, m.max)}</span>
+        </td>
+        <td class="my-price">
+          <div class="price-main">${fmtMid(y.min, y.max)}</div>
+          <span class="price-sub">${fmtRange(y.min, y.max)}</span>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const diffMultiplier = getDiffMultiplier();
+    const diffRow = diffMultiplier > 1.0
+      ? `<tr><td>難易度補正</td><td class="market-price"><div class="price-main">×${diffMultiplier}</div></td><td class="my-price"><div class="price-main">×${diffMultiplier}</div></td></tr>`
+      : '';
+
+    itemsEl.innerHTML = `
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>作業内容</th>
+            <th>全国相場<br><span style="opacity:0.6;font-size:9px">目安(範囲)</span></th>
+            <th>Lily Garden<br><span style="opacity:0.6;font-size:9px">目安(範囲)</span></th>
+          </tr>
+        </thead>
+        <tbody>${rows}${diffRow}</tbody>
+        <tfoot>
+          <tr>
+            <td>税込合計（目安）</td>
+            <td class="market-price"><div class="price-main">${fmtMid(mktGrandMin,mktGrandMax)}</div><span class="price-sub">${fmt(mktGrandMin)}〜${fmt(mktGrandMax)}</span></td>
+            <td class="my-price"><div class="price-main">${fmtMid(myGrandMin,myGrandMax)}</div><span class="price-sub">${fmt(myGrandMin)}〜${fmt(myGrandMax)}</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+
+    printBtn.disabled = false;
+  }
+
+  function printEstimate() {
+    if (!estimateData) return;
+    const { items, totalMin, totalMax } = estimateData;
+    const taxMin = Math.round(totalMin * 0.1);
+    const taxMax = Math.round(totalMax * 0.1);
+
+    const today = new Date();
+    document.getElementById('print-date').textContent =
+      `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日`;
+
+    const tbody = document.getElementById('print-table-body');
+    tbody.innerHTML = items.map(item => `
+      <tr>
+        <td>${item.name}</td>
+        <td class="right">${fmt(item.min)}</td>
+        <td class="right">${fmt(item.max)}</td>
+      </tr>
+    `).join('');
+
+    document.getElementById('pt-min-sub').textContent = fmt(totalMin);
+    document.getElementById('pt-max-sub').textContent = fmt(totalMax);
+    document.getElementById('pt-min-tax').textContent = fmt(taxMin);
+    document.getElementById('pt-max-tax').textContent = fmt(taxMax);
+    document.getElementById('pt-min-total').textContent = fmt(totalMin + taxMin);
+    document.getElementById('pt-max-total').textContent = fmt(totalMax + taxMax);
+
+    const notes = document.getElementById('notes').value.trim();
+    if (notes) {
+      document.getElementById('print-notes-section').style.display = 'block';
+      document.getElementById('print-notes-text').textContent = notes;
+    } else {
+      document.getElementById('print-notes-section').style.display = 'none';
+    }
+
+    window.print();
+  }
+
+  // init
+  calcEstimate();
+</script>
+
+</body>
+</html>
